@@ -38,25 +38,44 @@ body, html {
     flex-shrink: 0;
     z-index: 1001;
 }
-.action-icon { font-size: 24px; padding: 12px; cursor: pointer; color: var(--inactive-text); }
+.action-icon {
+    display: flex; /* Ensures icon is centered */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 24px;
+    padding: 12px 0;
+    cursor: pointer;
+    color: var(--inactive-text);
+    box-sizing: border-box;
+}
 .action-icon.active { color: var(--text-color); border-left: 2px solid var(--text-color); }
 .hamburger-menu { display: none; font-size: 24px; padding: 12px; cursor: pointer; color: var(--text-color); }
 
-/* --- Sidebar (Refactored Logic) --- */
+/* --- Sidebar (Refactored Logic for smooth transition) --- */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    transition: transform 0.3s ease-in-out;
+    transition: width 0.2s ease-in-out; /* Animate the width */
+    overflow: hidden;
 }
-/* This is the key change for desktop */
 .vscode-container[data-sidebar-visible="false"] .sidebar {
-    display: none;
+    width: 0; /* Instead of display:none, we shrink it */
 }
-/* (بقیه استایل‌های سایدبار بدون تغییر باقی می‌مانند) */
-.sidebar-header { padding: 10px; font-size: 12px; text-transform: uppercase; color: var(--inactive-text); border-bottom: 1px solid var(--border-color); }
+.sidebar-header {
+    padding: 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--inactive-text);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.file-explorer, .placeholder-content {
+    min-width: 250px; /* Prevent content from wrapping when shrinking */
+}
 .file-explorer ul { list-style: none; padding: 0; margin: 10px 0; }
 .file-explorer ul ul { padding-left: 20px; display: none; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
 .file-explorer li { padding: 5px 15px; cursor: pointer; display: flex; align-items: center; }
@@ -66,6 +85,16 @@ body, html {
 .folder[data-state="open"] > i.fa-folder::before { content: "\f07c"; }
 .folder[data-state="open"] > ul { display: block; max-height: 500px; }
 
+/* Placeholder styles for new views */
+.placeholder-content {
+    padding: 20px;
+    color: var(--inactive-text);
+    text-align: center;
+}
+.placeholder-content i {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
 
 /* --- Main Content & Other sections (no major changes) --- */
 .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -103,26 +132,27 @@ body, html {
 
 /* --- Responsive Design (Refactored Logic) --- */
 @media (max-width: 768px) {
-    .hamburger-menu { display: block; }
+    .hamburger-menu { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 0;}
     .action-icon[data-view="explorer"] { display: none; }
 
-    /* Override sidebar behavior for mobile */
-    .vscode-container[data-sidebar-visible="false"] .sidebar {
-        display: flex; /* It should always be flex for the transform to work */
-        transform: translateX(-100%);
-    }
-
+    /* Revert sidebar to absolute positioning for mobile overlay effect */
     .sidebar {
         position: absolute;
         top: 0;
         left: 0;
         height: 100%;
         z-index: 1000;
+        width: 250px; /* Fixed width on mobile */
         transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
     }
 
     .vscode-container[data-sidebar-visible="true"] .sidebar {
-        transform: translateX(50px); /* Slide in next to activity bar */
+        transform: translateX(50px);
+    }
+
+    .vscode-container[data-sidebar-visible="false"] .sidebar {
+        transform: translateX(-100%);
     }
 
     .status-bar { font-size: 12px; }
