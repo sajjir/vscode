@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,9 @@
 <body>
     <div class="vscode-container">
         <div class="activity-bar">
-        <div class="hamburger-menu" id="hamburger-menu">
-            <i class="fas fa-bars"></i>
-        </div>
+            <div class="hamburger-menu" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
             <div class="action-icon active" data-view="explorer"><i class="fas fa-files"></i></div>
             <div class="action-icon" data-view="search"><i class="fas fa-search"></i></div>
             <div class="action-icon" data-view="git"><i class="fas fa-code-branch"></i></div>
@@ -19,16 +20,18 @@
         </div>
 
         <div class="sidebar" id="explorer-view">
-            <div class="sidebar-header">اکسپلورر</div>
+            <div class="sidebar-header">EXPLORER</div>
             <div class="file-explorer">
                 <ul>
-                    <li class="folder" data-state="closed"><i class="fas fa-folder"></i> <span>معرفی</span>
+                    <li class="folder" data-state="open">
+                        <i class="fas fa-folder"></i> <span>Introduction</span>
                         <ul>
                             <li class="file" data-file="aboutme.md"><i class="fab fa-markdown"></i> about_me.md</li>
                             <li class="file" data-file="skills.py"><i class="fab fa-python"></i> skills.py</li>
                         </ul>
                     </li>
-                     <li class="folder" data-state="closed"><i class="fas fa-folder"></i> <span>پروژه‌ها</span>
+                     <li class="folder" data-state="closed">
+                        <i class="fas fa-folder"></i> <span>Projects</span>
                         <ul>
                             <li class="file" data-file="cool-project.json"><i class="fas fa-file-code"></i> cool-project.json</li>
                         </ul>
@@ -39,39 +42,44 @@
             </div>
         </div>
          <div class="sidebar" id="search-view" style="display: none;">
-            <div class="sidebar-header">جستجو</div>
-            <div style="padding: 10px; color: #888;">قابلیت جستجو در دست ساخت است...</div>
+            <div class="sidebar-header">SEARCH</div>
+            <div style="padding: 10px; color: #888;">Search functionality is under construction...</div>
         </div>
 
         <div class="main-content">
-            <div class="tabs-container">
+            <div class="editor-area">
+                <div class="tabs-container"></div>
+                <div class="editor-container"></div>
+            </div>
+            <div class="terminal" id="terminal">
+                <div class="terminal-header">
+                    <span>TERMINAL</span>
+                    <div class="terminal-controls">
+                        <i class="fas fa-chevron-up" id="toggle-terminal"></i>
+                        <i class="fas fa-times" id="close-terminal"></i>
+                    </div>
                 </div>
-            <div class="editor-container">
-                </div>
-        </div>
-
-        <div class="terminal" id="terminal">
-            <div class="terminal-header">TERMINAL</div>
-            <div class="terminal-body" id="terminal-body">
-                <div class="terminal-line">Welcome to Sajjad's Portfolio!</div>
-                <div class="terminal-line">Type 'help' to see available commands.</div>
-                <div class="terminal-prompt">
-                    <span>user@portfolio:~$</span>
-                    <input type="text" id="terminal-input" autofocus>
+                <div class="terminal-body" id="terminal-body">
+                    <div class="terminal-line">Welcome to Sajjad's Portfolio!</div>
+                    <div class="terminal-line">Type 'help' to see available commands.</div>
+                    <div class="terminal-prompt">
+                        <span>user@portfolio:~$</span>
+                        <input type="text" id="terminal-input" autofocus>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="status-bar">
-            <div class="status-left">
-                <i class="fas fa-code-branch"></i> main
-            </div>
-            <div class="status-right">
-                <span>UTF-8</span>
-                <span>LF</span>
-                <span><i class="fab fa-python"></i> Python 3.11</span>
-                <span><i class="fas fa-bell"></i></span>
-            </div>
+    <div class="status-bar">
+        <div class="status-left">
+            <i class="fas fa-code-branch"></i> main
+        </div>
+        <div class="status-right">
+            <span>UTF-8</span>
+            <span>LF</span>
+            <span><i class="fab fa-python"></i> Python 3.11</span>
+            <span><i class="fas fa-bell"></i></span>
         </div>
     </div>
 
