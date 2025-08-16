@@ -1,27 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
     const hamburgerMenu = document.getElementById('hamburger-menu');
     const sidebar = document.querySelector('#explorer-view');
+    const overlay = document.getElementById('overlay');
+    const allSidebars = document.querySelectorAll('.sidebar');
 
-    hamburgerMenu.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-    });
+    // --- Mobile Menu Logic ---
+    hamburgerMenu.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent click from bubbling up
+        const explorerSidebar = document.getElementById('explorer-view');
+        const isOpen = explorerSidebar.classList.contains('open');
 
-    // Close sidebar when a file is clicked on mobile
-    document.querySelector('.file-explorer').addEventListener('click', (e) => {
-        if (window.innerWidth <= 768 && e.target.closest('.file')) {
-            sidebar.classList.remove('open');
+        // Close all sidebars first
+        allSidebars.forEach(s => s.classList.remove('open'));
+
+        // If it was closed, open the explorer one
+        if (!isOpen) {
+            explorerSidebar.classList.add('open');
+            overlay.classList.add('active');
+        } else {
+            overlay.classList.remove('active');
         }
     });
 
+    // Close sidebar when clicking the overlay or a file
+    function closeMobileMenu() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+
+    overlay.addEventListener('click', closeMobileMenu);
+
+    document.querySelector('.file-explorer').addEventListener('click', (e) => {
+        if (window.innerWidth <= 768 && e.target.closest('.file')) {
+            closeMobileMenu();
+        }
+    });
+
+
+    // --- Original Logic from before ---
     const fileExplorerItems = document.querySelectorAll('.file-explorer .file');
     const folderItems = document.querySelectorAll('.file-explorer .folder');
     const activityBarIcons = document.querySelectorAll('.activity-bar .action-icon');
     
     const tabsContainer = document.querySelector('.tabs-container');
     const editorContainer = document.querySelector('.editor-container');
-    let openFiles = {}; // Tracks open files and their content
+    let openFiles = {};
 
-    // --- Content for each file (TRANSLATED) ---
     const fileContents = {
         'readme.md': `
 # 👋 Hi, I'm Sajjad!
@@ -50,7 +74,7 @@ class SajjadSkills:
         self.languages = ["Python", "JavaScript", "HTML", "CSS"]
         self.frameworks = {
             "backend": ["Flask", "Django", "FastAPI"],
-            "frontend": ["React", "Vue.js"] # Just examples
+            "frontend": ["React", "Vue.js"]
         }
         self.tools = ["Git", "Docker", "VS Code", "Linux"]
 
@@ -59,13 +83,11 @@ class SajjadSkills:
         for skill_type, skills in self.__dict__.items():
             print(f"\\n# {skill_type.capitalize()}")
             if isinstance(skills, list):
-                for skill in skills:
-                    print(f"- {skill}")
+                for skill in skills: print(f"- {skill}")
             elif isinstance(skills, dict):
                  for category, items in skills.items():
                     print(f"  ## {category.capitalize()}")
-                    for item in items:
-                        print(f"  - {item}")
+                    for item in items: print(f"  - {item}")
 
 me = SajjadSkills()
 me.show_skills()
@@ -86,13 +108,10 @@ me.show_skills()
     <form id="contactForm">
         <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
-        
         <label for="email">Your Email:</label>
         <input type="email" id="email" name="email" required>
-        
         <label for="message">Your Message:</label>
         <textarea id="message" name="message" rows="6" required></textarea>
-        
         <button type="submit">Send Message</button>
     </form>
     <div id="form-response"></div>
@@ -100,10 +119,12 @@ me.show_skills()
 `
     };
 
-    // --- Event Listeners ---
-
     activityBarIcons.forEach(icon => {
         icon.addEventListener('click', () => {
+            // On mobile, clicking activity icons should close the sidebar
+            if (window.innerWidth <= 768) {
+                closeMobileMenu();
+            }
             activityBarIcons.forEach(i => i.classList.remove('active'));
             icon.classList.add('active');
             
@@ -129,8 +150,6 @@ me.show_skills()
             openFile(filename);
         });
     });
-
-    // --- Core Functions ---
     
     function openFile(filename) {
         if (!openFiles[filename]) {
@@ -144,47 +163,35 @@ me.show_skills()
         const tab = document.createElement('div');
         tab.className = 'tab';
         tab.dataset.file = filename;
-        
         const fileIcon = document.querySelector(`.file[data-file="${filename}"] i`).cloneNode(true);
         const closeIcon = document.createElement('i');
         closeIcon.className = 'fas fa-times close-tab';
-
         tab.appendChild(fileIcon);
         tab.append(` ${filename} `);
         tab.appendChild(closeIcon);
-        
         tabsContainer.appendChild(tab);
-
         tab.addEventListener('click', () => setActiveFile(filename));
-        closeIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeFile(filename);
-        });
+        closeIcon.addEventListener('click', (e) => { e.stopPropagation(); closeFile(filename); });
     }
 
     function createEditorContent(filename) {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'editor-content';
         contentDiv.dataset.file = filename;
-        // Use a <pre> tag for better code formatting
-        contentDiv.innerHTML = `<pre>${fileContents[filename]}</pre>`;
+        contentDiv.innerHTML = `<pre>${fileContents[filename] || ''}</pre>`;
         editorContainer.appendChild(contentDiv);
-        
         openFiles[filename] = { tab: null, content: contentDiv };
-        
         if (filename === 'contact.html') {
             const form = contentDiv.querySelector('#contactForm');
-            form.addEventListener('submit', handleFormSubmit);
+            if(form) form.addEventListener('submit', handleFormSubmit);
         }
     }
 
     function setActiveFile(filename) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.editor-content').forEach(c => c.classList.remove('active'));
-
         const activeTab = document.querySelector(`.tab[data-file="${filename}"]`);
         const activeContent = document.querySelector(`.editor-content[data-file="${filename}"]`);
-        
         if(activeTab) activeTab.classList.add('active');
         if(activeContent) activeContent.classList.add('active');
     }
@@ -192,11 +199,9 @@ me.show_skills()
     function closeFile(filename) {
         const tab = document.querySelector(`.tab[data-file="${filename}"]`);
         const content = document.querySelector(`.editor-content[data-file="${filename}"]`);
-
         if (tab) tab.remove();
         if (content) content.remove();
         delete openFiles[filename];
-
         const remainingTabs = document.querySelectorAll('.tab');
         if (remainingTabs.length > 0) {
             setActiveFile(remainingTabs[remainingTabs.length - 1].dataset.file);
@@ -209,38 +214,31 @@ me.show_skills()
         event.preventDefault();
         const form = event.target;
         const responseDiv = document.querySelector('#form-response');
+        if(!responseDiv) return;
         responseDiv.textContent = 'Sending message...';
-
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-
         try {
-            // NOTE: You might need to update your Flask backend to handle CORS from the new origin if needed
             const response = await fetch('http://127.0.0.1:5000/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-
             const result = await response.json();
-
             if (response.ok) {
-                responseDiv.style.color = '#34c759'; // Green
+                responseDiv.style.color = '#34c759';
                 responseDiv.textContent = result.message;
                 form.reset();
             } else {
                 throw new Error(result.message || 'An error occurred.');
             }
         } catch (error) {
-            responseDiv.style.color = '#ff3b30'; // Red
+            responseDiv.style.color = '#ff3b30';
             responseDiv.textContent = `Error sending message: ${error.message}`;
         }
     }
 
-    // Open README.md by default
-    openFile('readme.md');
-
-    // --- NEW Terminal Logic ---
+    // --- Terminal Logic ---
     const terminal = document.getElementById('terminal');
     const terminalInput = document.getElementById('terminal-input');
     const terminalBody = document.getElementById('terminal-body');
@@ -248,28 +246,27 @@ me.show_skills()
     const toggleTerminalBtn = document.getElementById('toggle-terminal');
     const terminalHeader = document.querySelector('.terminal-header');
 
-    terminalInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            const command = terminalInput.value.trim();
-            if (command) {
-                const prompt = terminalBody.querySelector('.terminal-prompt');
-                const newLine = document.createElement('div');
-                newLine.className = 'terminal-line';
-                newLine.innerHTML = `<span>user@portfolio:~$</span> ${command}`;
-                terminalBody.insertBefore(newLine, prompt);
-
-                executeCommand(command);
-
-                terminalInput.value = '';
-                terminalBody.scrollTop = terminalBody.scrollHeight;
+    if (terminalInput) {
+        terminalInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                if (command) {
+                    const prompt = terminalBody.querySelector('.terminal-prompt');
+                    const newLine = document.createElement('div');
+                    newLine.className = 'terminal-line';
+                    newLine.innerHTML = `<span>user@portfolio:~$</span> ${command}`;
+                    terminalBody.insertBefore(newLine, prompt);
+                    executeCommand(command);
+                    terminalInput.value = '';
+                    terminalBody.scrollTop = terminalBody.scrollHeight;
+                }
             }
-        }
-    });
+        });
+    }
 
-    closeTerminalBtn.addEventListener('click', () => terminal.style.display = 'none');
-    toggleTerminalBtn.addEventListener('click', toggleTerminal);
-    terminalHeader.addEventListener('click', (e) => {
-        // Only toggle if clicking the header itself, not the buttons
+    if(closeTerminalBtn) closeTerminalBtn.addEventListener('click', () => terminal.style.display = 'none');
+    if(toggleTerminalBtn) toggleTerminalBtn.addEventListener('click', toggleTerminal);
+    if(terminalHeader) terminalHeader.addEventListener('click', (e) => {
         if(e.target === terminalHeader || e.target.tagName === 'SPAN') {
             toggleTerminal();
         }
@@ -285,39 +282,31 @@ me.show_skills()
     function executeCommand(command) {
         let output = '';
         const commands = {
-            'help': `Available commands:
-    - whoami    : About me
-    - skills    : List my technical skills
-    - contact   : Show my contact information
-    - clear     : Clear the terminal screen`,
-            'whoami': 'Sajjad - A passionate developer who loves solving complex problems and building cool things.',
-            'skills': `
-Languages:  Python, JavaScript, HTML, CSS
-Frameworks: Flask, Django, React, Vue.js
-Tools:      Git, Docker, VS Code, Linux`,
-            'contact': `You can reach me at:
-    Email: your_email@gmail.com
-    LinkedIn: linkedin.com/in/your-profile`,
+            'help': `Available commands:\n- whoami\n- skills\n- contact\n- clear`,
+            'whoami': 'Sajjad - A passionate developer...',
+            'skills': `Languages: Python, JavaScript, HTML, CSS\nFrameworks: Flask, Django, React, Vue.js\nTools: Git, Docker, VS Code, Linux`,
+            'contact': `Email: your_email@gmail.com\nLinkedIn: linkedin.com/in/your-profile`,
             'clear': ''
         };
-
         const commandKey = command.toLowerCase();
         if (commandKey in commands) {
             output = commands[commandKey];
             if (commandKey === 'clear') {
                 const prompt = terminalBody.querySelector('.terminal-prompt');
-                terminalBody.innerHTML = ''; // Clear everything
-                terminalBody.appendChild(prompt); // Add the prompt back
+                terminalBody.innerHTML = '';
+                terminalBody.appendChild(prompt);
                 document.getElementById('terminal-input').focus();
                 return;
             }
         } else {
             output = `bash: command not found: ${command}`;
         }
-
         const outputLine = document.createElement('div');
         outputLine.className = 'terminal-line';
         outputLine.textContent = output;
         terminalBody.insertBefore(outputLine, terminalBody.querySelector('.terminal-prompt'));
     }
+
+    // Open README.md by default
+    openFile('readme.md');
 });
