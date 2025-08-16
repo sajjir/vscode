@@ -21,28 +21,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const editorContainer = document.querySelector('.editor-container');
     let openFiles = {}; // Tracks open files and their content
 
-    // --- Content for each file ---
+    // --- Content for each file (TRANSLATED) ---
     const fileContents = {
         'readme.md': `
-# 👋 سلام، من سجاد هستم!
+# 👋 Hi, I'm Sajjad!
 
-به پورتفولیوی تعاملی من خوش اومدی. این سایت یک شبیه‌سازی از محیط کدنویسی مورد علاقه‌ام، **VS Code** است.
+Welcome to my interactive portfolio. This website is a simulation of my favorite coding environment, **VS Code**.
 
-### 🚀 درباره من
-- برنامه‌نویس و عاشق حل مسائل پیچیده.
-- همیشه در حال یادگیری تکنولوژی‌های جدید.
-- برای دیدن مهارت‌هام، فایل \`skills.py\` رو باز کن!
+### 🚀 About Me
+- A programmer who loves solving complex problems.
+- Always learning new technologies.
+- To see my skills, open the \`skills.py\` file!
 
-### 🎮 سرگرمی‌ها
-- بازی‌های ویدیویی استراتژیک
-- مطالعه کتاب‌های علمی-تخیلی
-- گشت و گذار در گیت‌هاب و پیدا کردن پروژه‌های جالب
+### 🎮 Hobbies
+- Strategic video games
+- Reading sci-fi books
+- Exploring GitHub for interesting projects
 `,
         'aboutme.md': `
-## بیوگرافی کامل‌تر
+## A More Detailed Bio
 
-من یک توسعه‌دهنده نرم‌افزار با تجربه در ... هستم. علاقه اصلی من ساخت ابزارهای کارآمد و خلاقانه است که زندگی رو برای مردم ساده‌تر کنه. 
-این پروژه یکی از نمونه‌کارهای من برای نمایش ترکیبی از مهارت‌های فرانت‌اند و بک‌اند هست.
+I am a software developer with experience in... My main passion is building efficient and creative tools that make life easier for people.
+This project is one of my portfolio pieces to showcase a combination of my front-end and back-end skills.
 `,
         'skills.py': `
 class SajjadSkills:
@@ -73,7 +73,7 @@ me.show_skills()
         'cool-project.json': `
 {
   "projectName": "VS Code Portfolio",
-  "description": "یک وبسایت شخصی خلاقانه که با الهام از محیط VS Code طراحی شده تا مهارت‌ها و پروژه‌ها رو به شکلی جذاب نمایش بده.",
+  "description": "A creative personal website designed with inspiration from the VS Code environment to showcase skills and projects in an engaging way.",
   "technologies": ["HTML", "CSS", "JavaScript", "Python", "Flask"],
   "status": "In Development",
   "github_link": "https://github.com/your-username/your-repo"
@@ -81,19 +81,19 @@ me.show_skills()
 `,
         'contact.html': `
 <div class="contact-form">
-    <h2><i class="fas fa-paper-plane"></i> تماس با من</h2>
-    <p>برای همکاری، سوال یا فقط یک سلام، فرم زیر رو پر کن!</p>
+    <h2><i class="fas fa-paper-plane"></i> Contact Me</h2>
+    <p>Fill out the form below for collaborations, questions, or just to say hi!</p>
     <form id="contactForm">
-        <label for="name">نام شما:</label>
+        <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
         
-        <label for="email">ایمیل شما:</label>
+        <label for="email">Your Email:</label>
         <input type="email" id="email" name="email" required>
         
-        <label for="message">پیام شما:</label>
+        <label for="message">Your Message:</label>
         <textarea id="message" name="message" rows="6" required></textarea>
         
-        <button type="submit">ارسال پیام</button>
+        <button type="submit">Send Message</button>
     </form>
     <div id="form-response"></div>
 </div>
@@ -102,13 +102,11 @@ me.show_skills()
 
     // --- Event Listeners ---
 
-    // 1. Activity Bar clicks
     activityBarIcons.forEach(icon => {
         icon.addEventListener('click', () => {
             activityBarIcons.forEach(i => i.classList.remove('active'));
             icon.classList.add('active');
             
-            // Show/hide corresponding sidebar view (simple version)
             const viewId = icon.dataset.view + '-view';
             document.querySelectorAll('.sidebar').forEach(view => {
                 view.style.display = view.id === viewId ? 'flex' : 'none';
@@ -116,7 +114,6 @@ me.show_skills()
         });
     });
 
-    // 2. Folder clicks
     folderItems.forEach(folder => {
         folder.addEventListener('click', (e) => {
             if (e.target.tagName === 'SPAN' || e.target.tagName === 'I') {
@@ -126,7 +123,6 @@ me.show_skills()
         });
     });
     
-    // 3. File clicks
     fileExplorerItems.forEach(item => {
         item.addEventListener('click', () => {
             const filename = item.dataset.file;
@@ -138,7 +134,6 @@ me.show_skills()
     
     function openFile(filename) {
         if (!openFiles[filename]) {
-            // If file is not open, create tab and content
             createTab(filename);
             createEditorContent(filename);
         }
@@ -171,12 +166,12 @@ me.show_skills()
         const contentDiv = document.createElement('div');
         contentDiv.className = 'editor-content';
         contentDiv.dataset.file = filename;
-        contentDiv.innerHTML = fileContents[filename];
+        // Use a <pre> tag for better code formatting
+        contentDiv.innerHTML = `<pre>${fileContents[filename]}</pre>`;
         editorContainer.appendChild(contentDiv);
         
-        openFiles[filename] = { tab: null, content: contentDiv }; // Store reference
+        openFiles[filename] = { tab: null, content: contentDiv };
         
-        // If it's the contact form, add the submit listener
         if (filename === 'contact.html') {
             const form = contentDiv.querySelector('#contactForm');
             form.addEventListener('submit', handleFormSubmit);
@@ -184,11 +179,9 @@ me.show_skills()
     }
 
     function setActiveFile(filename) {
-        // Deactivate all
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.editor-content').forEach(c => c.classList.remove('active'));
 
-        // Activate selected
         const activeTab = document.querySelector(`.tab[data-file="${filename}"]`);
         const activeContent = document.querySelector(`.editor-content[data-file="${filename}"]`);
         
@@ -204,10 +197,11 @@ me.show_skills()
         if (content) content.remove();
         delete openFiles[filename];
 
-        // Activate another tab if one exists, otherwise show empty
         const remainingTabs = document.querySelectorAll('.tab');
         if (remainingTabs.length > 0) {
             setActiveFile(remainingTabs[remainingTabs.length - 1].dataset.file);
+        } else {
+            editorContainer.innerHTML = '';
         }
     }
     
@@ -215,12 +209,13 @@ me.show_skills()
         event.preventDefault();
         const form = event.target;
         const responseDiv = document.querySelector('#form-response');
-        responseDiv.textContent = 'در حال ارسال پیام...';
+        responseDiv.textContent = 'Sending message...';
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
         try {
+            // NOTE: You might need to update your Flask backend to handle CORS from the new origin if needed
             const response = await fetch('http://127.0.0.1:5000/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -234,36 +229,58 @@ me.show_skills()
                 responseDiv.textContent = result.message;
                 form.reset();
             } else {
-                throw new Error(result.message || 'خطایی رخ داد.');
+                throw new Error(result.message || 'An error occurred.');
             }
         } catch (error) {
             responseDiv.style.color = '#ff3b30'; // Red
-            responseDiv.textContent = `خطا در ارسال: ${error.message}`;
+            responseDiv.textContent = `Error sending message: ${error.message}`;
         }
     }
 
     // Open README.md by default
     openFile('readme.md');
 
-    // --- Terminal Logic ---
+    // --- NEW Terminal Logic ---
+    const terminal = document.getElementById('terminal');
     const terminalInput = document.getElementById('terminal-input');
     const terminalBody = document.getElementById('terminal-body');
+    const closeTerminalBtn = document.getElementById('close-terminal');
+    const toggleTerminalBtn = document.getElementById('toggle-terminal');
+    const terminalHeader = document.querySelector('.terminal-header');
 
     terminalInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
-            const command = terminalInput.value;
-            const prompt = terminalBody.querySelector('.terminal-prompt');
-            const newLine = document.createElement('div');
-            newLine.className = 'terminal-line';
-            newLine.innerHTML = `<span>user@portfolio:~$</span> ${command}`;
-            terminalBody.insertBefore(newLine, prompt);
+            const command = terminalInput.value.trim();
+            if (command) {
+                const prompt = terminalBody.querySelector('.terminal-prompt');
+                const newLine = document.createElement('div');
+                newLine.className = 'terminal-line';
+                newLine.innerHTML = `<span>user@portfolio:~$</span> ${command}`;
+                terminalBody.insertBefore(newLine, prompt);
 
-            executeCommand(command);
+                executeCommand(command);
 
-            terminalInput.value = '';
-            terminalBody.scrollTop = terminalBody.scrollHeight;
+                terminalInput.value = '';
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }
         }
     });
+
+    closeTerminalBtn.addEventListener('click', () => terminal.style.display = 'none');
+    toggleTerminalBtn.addEventListener('click', toggleTerminal);
+    terminalHeader.addEventListener('click', (e) => {
+        // Only toggle if clicking the header itself, not the buttons
+        if(e.target === terminalHeader || e.target.tagName === 'SPAN') {
+            toggleTerminal();
+        }
+    });
+
+    function toggleTerminal() {
+        terminal.classList.toggle('hidden');
+        const icon = toggleTerminalBtn.classList;
+        icon.toggle('fa-chevron-up');
+        icon.toggle('fa-chevron-down');
+    }
 
     function executeCommand(command) {
         let output = '';
@@ -284,16 +301,14 @@ Tools:      Git, Docker, VS Code, Linux`,
             'clear': ''
         };
 
-        if (command.toLowerCase() in commands) {
-            output = commands[command.toLowerCase()];
-            if (command.toLowerCase() === 'clear') {
+        const commandKey = command.toLowerCase();
+        if (commandKey in commands) {
+            output = commands[commandKey];
+            if (commandKey === 'clear') {
+                const prompt = terminalBody.querySelector('.terminal-prompt');
                 terminalBody.innerHTML = ''; // Clear everything
-                const prompt = document.createElement('div');
-                prompt.className = 'terminal-prompt';
-                prompt.innerHTML = `<span>user@portfolio:~$</span><input type="text" id="terminal-input" autofocus>`;
-                terminalBody.appendChild(prompt);
-                // Re-add event listener to the new input
-                document.getElementById('terminal-input').addEventListener('keydown', arguments.callee.caller);
+                terminalBody.appendChild(prompt); // Add the prompt back
+                document.getElementById('terminal-input').focus();
                 return;
             }
         } else {
