@@ -1,50 +1,87 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Element Selectors ---
+    const vscodeContainer = document.querySelector('.vscode-container');
     const hamburgerMenu = document.getElementById('hamburger-menu');
-    const sidebar = document.querySelector('#explorer-view');
     const overlay = document.getElementById('overlay');
-    const allSidebars = document.querySelectorAll('.sidebar');
+    const activityBarIcons = document.querySelectorAll('.activity-bar .action-icon');
+    const fileExplorerItems = document.querySelectorAll('.file-explorer .file');
+    const folderItems = document.querySelectorAll('.file-explorer .folder');
+    const tabsContainer = document.querySelector('.tabs-container');
+    const editorContainer = document.querySelector('.editor-container');
 
-    // --- Mobile Menu Logic ---
-    hamburgerMenu.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent click from bubbling up
-        const explorerSidebar = document.getElementById('explorer-view');
-        const isOpen = explorerSidebar.classList.contains('open');
+    let openFiles = {};
 
-        // Close all sidebars first
-        allSidebars.forEach(s => s.classList.remove('open'));
-
-        // If it was closed, open the explorer one
-        if (!isOpen) {
-            explorerSidebar.classList.add('open');
-            overlay.classList.add('active');
-        } else {
-            overlay.classList.remove('active');
-        }
-    });
-
-    // Close sidebar when clicking the overlay or a file
-    function closeMobileMenu() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
+    // --- State Management ---
+    function setSidebarVisible(visible) {
+        vscodeContainer.dataset.sidebarVisible = visible;
+        overlay.classList.toggle('active', visible && window.innerWidth <= 768);
     }
 
-    overlay.addEventListener('click', closeMobileMenu);
+    function isSidebarVisible() {
+        return vscodeContainer.dataset.sidebarVisible === 'true';
+    }
+
+    // --- Event Listeners ---
+
+    // Refactored Activity Bar Logic (The main fix)
+    activityBarIcons.forEach(icon => {
+        icon.addEventListener('click', () => {
+            const wasActive = icon.classList.contains('active');
+            const targetViewId = icon.dataset.view + '-view';
+
+            // Deactivate all icons first
+            activityBarIcons.forEach(i => i.classList.remove('active'));
+            // Activate the clicked one
+            icon.classList.add('active');
+
+            // Show the correct sidebar panel
+            document.querySelectorAll('.sidebar').forEach(view => {
+                view.style.display = view.id === targetViewId ? 'flex' : 'none';
+            });
+
+            // Core VS Code Logic:
+            if (wasActive) {
+                // If it was already active, toggle visibility
+                setSidebarVisible(!isSidebarVisible());
+            } else {
+                // If it was not active, just ensure sidebar is visible
+                setSidebarVisible(true);
+            }
+        });
+    });
+
+    // Mobile-specific listeners
+    hamburgerMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setSidebarVisible(!isSidebarVisible());
+    });
+
+    overlay.addEventListener('click', () => setSidebarVisible(false));
 
     document.querySelector('.file-explorer').addEventListener('click', (e) => {
         if (window.innerWidth <= 768 && e.target.closest('.file')) {
-            closeMobileMenu();
+            setSidebarVisible(false);
         }
     });
 
-
-    // --- Original Logic from before ---
-    const fileExplorerItems = document.querySelectorAll('.file-explorer .file');
-    const folderItems = document.querySelectorAll('.file-explorer .folder');
-    const activityBarIcons = document.querySelectorAll('.activity-bar .action-icon');
+    // --- Original File & Folder Logic (no changes needed here) ---
+    folderItems.forEach(folder => {
+        folder.addEventListener('click', (e) => {
+            if (e.target.tagName === 'SPAN' || e.target.tagName === 'I') {
+                const currentState = folder.dataset.state;
+                folder.dataset.state = currentState === 'closed' ? 'open' : 'closed';
+            }
+        });
+    });
     
-    const tabsContainer = document.querySelector('.tabs-container');
-    const editorContainer = document.querySelector('.editor-container');
-    let openFiles = {};
+    fileExplorerItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const filename = item.dataset.file;
+            openFile(filename);
+        });
+    });
+
+    // (The rest of the file remains largely the same)
 
     const fileContents = {
         'readme.md': `
@@ -119,38 +156,6 @@ me.show_skills()
 `
     };
 
-    activityBarIcons.forEach(icon => {
-        icon.addEventListener('click', () => {
-            // On mobile, clicking activity icons should close the sidebar
-            if (window.innerWidth <= 768) {
-                closeMobileMenu();
-            }
-            activityBarIcons.forEach(i => i.classList.remove('active'));
-            icon.classList.add('active');
-            
-            const viewId = icon.dataset.view + '-view';
-            document.querySelectorAll('.sidebar').forEach(view => {
-                view.style.display = view.id === viewId ? 'flex' : 'none';
-            });
-        });
-    });
-
-    folderItems.forEach(folder => {
-        folder.addEventListener('click', (e) => {
-            if (e.target.tagName === 'SPAN' || e.target.tagName === 'I') {
-                const currentState = folder.dataset.state;
-                folder.dataset.state = currentState === 'closed' ? 'open' : 'closed';
-            }
-        });
-    });
-    
-    fileExplorerItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const filename = item.dataset.file;
-            openFile(filename);
-        });
-    });
-    
     function openFile(filename) {
         if (!openFiles[filename]) {
             createTab(filename);
@@ -307,6 +312,6 @@ me.show_skills()
         terminalBody.insertBefore(outputLine, terminalBody.querySelector('.terminal-prompt'));
     }
 
-    // Open README.md by default
+    // --- Initial Setup ---
     openFile('readme.md');
 });
