@@ -10,6 +10,14 @@
     --active-tab-bg: #1e1e1e;
     --inactive-tab-bg: #2d2d2d;
     --link-color: #569cd6;
+    /* --- Syntax Highlighting Colors --- */
+    --token-keyword: #c586c0;
+    --token-string: #ce9178;
+    --token-class: #4ec9b0;
+    --token-function: #dcdcaa;
+    --token-comment: #6a9955;
+    --token-number: #b5cea8;
+    --token-property: #9cdcfe;
 }
 
 body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
@@ -41,17 +49,12 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, Bl
 .tab .close-tab:hover { color: var(--text-color); background-color: rgba(255,255,255,0.2); border-radius: 3px; }
 .editor-container { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: var(--editor-bg); direction: ltr; text-align: left; }
 .editor-content { display: none; line-height: 1.6; font-family: 'Fira Code', 'Consolas', monospace; }
-/* --- THIS IS THE FIX for text wrapping --- */
-.editor-content pre {
-    white-space: pre-wrap;
-    word-break: break-word;
-    margin: 0; /* Resets default margin of pre tag */
-    font-family: inherit; /* Ensures it uses the parent's font */
-}
+.editor-content pre { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; }
 .editor-content.active { display: block; }
-.terminal { height: 200px; background-color: #181818; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px; flex-shrink: 0; transition: height 0.3s ease-in-out; }
+.terminal { background-color: #181818; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px; flex-shrink: 0; transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out; height: 200px; opacity: 1; }
 .terminal.hidden { height: 30px; }
-.terminal-header { background-color: #333; padding: 5px 15px; font-size: 12px; color: var(--inactive-text); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.terminal.closed { height: 0; opacity: 0; border-top: none; pointer-events: none; }
+.terminal-header { background-color: #333; padding: 5px 15px; font-size: 12px; color: var(--inactive-text); display: flex; justify-content: space-between; align-items: center; cursor: pointer; flex-shrink: 0; }
 .terminal-controls i { margin: 0 5px; cursor: pointer; }
 .terminal-controls i:hover { color: var(--text-color); }
 .terminal-body { flex-grow: 1; padding: 10px; overflow-y: auto; }
@@ -77,6 +80,30 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, Bl
 .social-links a:hover { color: var(--link-color); }
 .social-links i { font-size: 24px; }
 
+/* --- Welcome Page Styles --- */
+.welcome-page { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
+.welcome-page h1 { font-size: 48px; color: var(--text-color); margin: 0; }
+.welcome-page h1 .hand { display: inline-block; animation: wave 2s infinite; transform-origin: 70% 70%; }
+@keyframes wave { 0% { transform: rotate(0deg); } 10% { transform: rotate(14deg); } 20% { transform: rotate(-8deg); } 30% { transform: rotate(14deg); } 40% { transform: rotate(-4deg); } 50% { transform: rotate(10deg); } 60% { transform: rotate(0deg); } 100% { transform: rotate(0deg); } }
+.welcome-page p { font-size: 18px; color: var(--inactive-text); margin-top: 10px; }
+.welcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 50px; text-align: left; }
+.welcome-card { background-color: var(--sidebar-bg); padding: 20px; border-radius: 5px; }
+.welcome-card h3 { margin: 0 0 10px; color: var(--link-color); }
+.welcome-card ul { list-style: none; padding: 0; margin: 0; }
+.welcome-card li { margin-bottom: 8px; }
+.welcome-card a { color: var(--text-color); text-decoration: none; cursor: pointer; }
+.welcome-card a:hover { text-decoration: underline; }
+.welcome-card i { margin-right: 10px; color: var(--inactive-text); }
+
+/* --- Syntax Highlighting Styles --- */
+.token-keyword { color: var(--token-keyword); }
+.token-class { color: var(--token-class); font-style: italic; }
+.token-function { color: var(--token-function); }
+.token-string { color: var(--token-string); }
+.token-comment { color: var(--token-comment); }
+.token-number { color: var(--token-number); }
+.token-property { color: var(--token-property); }
+
 @media (max-width: 768px) {
     .hamburger-menu { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 0;}
     .action-icon[data-view="explorer"] { display: none; }
@@ -86,4 +113,5 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, Bl
     .status-bar { font-size: 12px; }
     .status-right span { display: none; }
     .status-right span:nth-child(1), .status-right span:nth-child(4) { display: inline; }
+    .welcome-page h1 { font-size: 36px; }
 }
