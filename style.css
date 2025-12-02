@@ -23,13 +23,71 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, Bl
 .sidebar-header { padding: 10px; font-size: 12px; text-transform: uppercase; color: var(--inactive-text); border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
 .file-explorer, .placeholder-content { min-width: 250px; }
 .file-explorer ul { list-style: none; padding: 0; margin: 10px 0; }
-.file-explorer ul ul { padding-left: 20px; display: none; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-.file-explorer li { padding: 5px 15px; cursor: pointer; display: flex; align-items: center; }
+
+/* بهبود ظاهر آیکون‌ها و Folder Toggle برای شبیه‌سازی بهتر VS Code */
+
+/* تنظیمات کلی آیتم‌های لیست */
+.file-explorer li {
+    padding: 5px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
 .file-explorer li:hover { background-color: rgba(255, 255, 255, 0.1); }
-.file-explorer li i { margin-right: 8px; width: 16px; text-align: center; }
-.folder > i.fa-folder::before { content: "\f07b"; }
-.folder[data-state="open"] > i.fa-folder::before { content: "\f07c"; }
-.folder[data-state="open"] > ul { display: block; max-height: 500px; }
+
+/* تنظیمات آیکون‌ها */
+.file-explorer li i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+    transition: transform 0.2s;
+    flex-shrink: 0; /* برای جلوگیری از فشرده شدن آیکون‌ها */
+}
+
+/* آیکون فلش/مثلث (اولین آیکون در هر پوشه) */
+.folder > i:first-child {
+    margin-right: 4px; /* فضای کمتر برای فلش */
+    width: auto;
+    color: var(--inactive-text);
+}
+
+/* آیکون پوشه (دومین آیکون در هر پوشه) */
+.folder > i:nth-child(2) {
+    color: #5d93d3; /* رنگ آبی معمول برای پوشه‌ها */
+}
+
+/* چرخش آیکون فلش هنگام باز بودن پوشه */
+.folder[data-state="open"] > i:first-child {
+    transform: rotate(90deg);
+}
+
+/* نمایش و استایل زیرمنوها */
+.file-explorer ul ul {
+    padding-left: 18px; /* پدینگ تنظیم شده برای زیبایی بیشتر */
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.folder[data-state="open"] > ul {
+    display: block;
+    max-height: 500px; /* این خط را از کدهای قدیمی برگرداندیم */
+}
+
+/* تنظیم رنگ‌های آیکون فایل‌ها برای تم VS Code */
+.file i {
+    color: #ce9178; /* رنگ پیش‌فرض برای فایل */
+}
+.file[data-file="settings.json"] i { color: #808080; }
+.file[data-file*=".md"] i { color: #6494ed; }
+.file[data-file*=".py"] i { color: #ffd43b; }
+.file[data-file*=".json"] i { color: #f29059; }
+
+/* مطمئن شوید که نام پوشه تمام فضای باقی‌مانده را بگیرد */
+.folder > span {
+    flex-grow: 1;
+}
 .placeholder-content { padding: 20px; color: var(--inactive-text); text-align: center; }
 .placeholder-content i { font-size: 48px; margin-bottom: 15px; }
 .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
