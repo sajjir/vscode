@@ -8,21 +8,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="vscode-container">
+    <div class="vscode-container" data-sidebar-visible="true">
         <div class="activity-bar">
             <div class="hamburger-menu" id="hamburger-menu">
                 <i class="fas fa-bars"></i>
             </div>
-            <div class="action-icon active" data-view="explorer"><i class="fas fa-files"></i></div>
-            <div class="action-icon" data-view="search"><i class="fas fa-search"></i></div>
-            <div class="action-icon" data-view="git"><i class="fas fa-code-branch"></i></div>
-            <div class="action-icon" data-view="extensions"><i class="fas fa-puzzle-piece"></i></div>
+            <div class="action-icon" data-view="explorer" title="Explorer"><i class="fas fa-files"></i></div>
+            <div class="action-icon" data-view="search" title="Search"><i class="fas fa-search"></i></div>
+            <div class="action-icon" data-view="git" title="Source Control"><i class="fas fa-code-branch"></i></div>
+            <div class="action-icon" data-view="extensions" title="Extensions"><i class="fas fa-puzzle-piece"></i></div>
         </div>
 
         <div class="sidebar" id="explorer-view">
             <div class="sidebar-header">EXPLORER</div>
             <div class="file-explorer">
                 <ul>
+                    <li class="folder" data-state="closed">
+                        <i class="fas fa-folder"></i> <span>.vscode</span>
+                        <ul>
+                            <li class="file" data-file="settings.json"><i class="fas fa-cog"></i> settings.json</li>
+                        </ul>
+                    </li>
                     <li class="folder" data-state="open">
                         <i class="fas fa-folder"></i> <span>Introduction</span>
                         <ul>
@@ -30,7 +36,7 @@
                             <li class="file" data-file="skills.py"><i class="fab fa-python"></i> skills.py</li>
                         </ul>
                     </li>
-                     <li class="folder" data-state="closed">
+                    <li class="folder" data-state="closed">
                         <i class="fas fa-folder"></i> <span>Projects</span>
                         <ul>
                             <li class="file" data-file="cool-project.json"><i class="fas fa-file-code"></i> cool-project.json</li>
@@ -41,9 +47,18 @@
                 </ul>
             </div>
         </div>
-         <div class="sidebar" id="search-view" style="display: none;">
+
+        <div class="sidebar" id="search-view" style="display: none;">
             <div class="sidebar-header">SEARCH</div>
-            <div style="padding: 10px; color: #888;">Search functionality is under construction...</div>
+            <div class="placeholder-content">Search functionality is under construction...</div>
+        </div>
+        <div class="sidebar" id="git-view" style="display: none;">
+            <div class="sidebar-header">SOURCE CONTROL</div>
+            <div class="placeholder-content"><i class="fas fa-code-branch"></i><p>Source control features are under construction.</p></div>
+        </div>
+        <div class="sidebar" id="extensions-view" style="display: none;">
+            <div class="sidebar-header">EXTENSIONS</div>
+            <div class="placeholder-content"><i class="fas fa-puzzle-piece"></i><p>Extensions marketplace is under construction.</p></div>
         </div>
 
         <div class="main-content">
@@ -71,10 +86,9 @@
         </div>
     </div>
 
+    <div class="overlay" id="overlay"></div>
     <div class="status-bar">
-        <div class="status-left">
-            <i class="fas fa-code-branch"></i> main
-        </div>
+        <div class="status-left"><i class="fas fa-code-branch"></i> main</div>
         <div class="status-right">
             <span>UTF-8</span>
             <span>LF</span>
@@ -82,7 +96,6 @@
             <span><i class="fas fa-bell"></i></span>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
